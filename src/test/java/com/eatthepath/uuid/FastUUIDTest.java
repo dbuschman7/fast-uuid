@@ -26,6 +26,7 @@ package com.eatthepath.uuid;
 
 import org.junit.Test;
 
+import java.security.SecureRandom;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -80,5 +81,13 @@ public class FastUUIDTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetHexValueForCharIllegalChar() {
         FastUUID.getHexValueForChar('x');
+    }
+
+    @Test
+    public void testRandomUUIDString() {
+        final UUID randomUUIDFromString = FastUUID.parseUUID(FastUUID.randomUUIDString(new SecureRandom()));
+
+        assertEquals(4, randomUUIDFromString.version());
+        assertEquals(2, randomUUIDFromString.variant());
     }
 }

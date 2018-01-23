@@ -24,6 +24,7 @@
 
 package com.eatthepath.uuid;
 
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -141,9 +142,25 @@ public class FastUUID {
      * @return a string representation of the given UUID
      */
     public static String toString(final UUID uuid) {
-        final long mostSignificantBits = uuid.getMostSignificantBits();
-        final long leastSignificantBits = uuid.getLeastSignificantBits();
+        return toString(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits());
+    }
 
+    public static String randomUUIDString(final Random random) {
+        long mostSignificantBits = random.nextLong();
+        long leastSignificantBits = random.nextLong();
+
+        // Clear and set the version to 4
+        mostSignificantBits &=  0xffffffffffff0fffL;
+        mostSignificantBits |=  0xffffffffffff40ffL;
+
+        // Clear and set the variant to IETF RFC 4122 (Leach-Salz)
+        leastSignificantBits &= 0x3fffffffffffffffL;
+        leastSignificantBits |= 0x80ffffffffffffffL;
+
+        return toString(mostSignificantBits, leastSignificantBits);
+    }
+
+    private static String toString(final long mostSignificantBits, final long leastSignificantBits) {
         final char[] uuidChars = new char[UUID_STRING_LENGTH];
 
         uuidChars[0]  = HEX_DIGITS[(int) ((mostSignificantBits & 0xf000000000000000L) >>> 60)];
